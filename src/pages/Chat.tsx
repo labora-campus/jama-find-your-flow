@@ -41,22 +41,25 @@ const mockResponses: { keywords: string[]; response: string; cafes: string[] }[]
   },
 ];
 
-const getAIResponse = (userMessage: string): { response: string; cafes: Cafeteria[] } => {
-  const lowerMessage = userMessage.toLowerCase();
-  
-  for (const mock of mockResponses) {
-    if (mock.keywords.some(keyword => lowerMessage.includes(keyword))) {
-      const matchedCafes = cafeterias.filter(c => mock.cafes.includes(c.id));
-      return { response: mock.response, cafes: matchedCafes };
-    }
+const getAIResponse = async (userMessage: string): Promise<{ response: string; cafes: Cafeteria[] }> => {
+  try {
+    const res = await fetch('https://brandoncandia.app.n8n.cloud/webhook-test/JamitoCoffe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: userMessage }),
+    });
+    const data = await res.json();
+    const responseText = typeof data === 'string' ? data : (data.response || data.message || data.output || JSON.stringify(data));
+    
+    // Try to match cafes from the response
+    const lowerResponse = responseText.toLowerCase();
+    const matchedCafes = cafeterias.filter(c => lowerResponse.includes(c.name.toLowerCase()));
+    
+    return { response: responseText, cafes: matchedCafes };
+  } catch (error) {
+    console.error('Webhook error:', error);
+    return { response: 'Lo siento, hubo un error al procesar tu mensaje. Intentá de nuevo.', cafes: [] };
   }
-  
-  // Default response
-  const randomCafes = cafeterias.sort(() => Math.random() - 0.5).slice(0, 3);
-  return {
-    response: 'Basándome en lo que me contás, te recomiendo estos lugares que podrían gustarte:',
-    cafes: randomCafes,
-  };
 };
 
 const Chat = () => {
