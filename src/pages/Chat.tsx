@@ -97,18 +97,18 @@ const Chat = () => {
     setInput('');
     setIsTyping(true);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const { response, cafes } = getAIResponse(input);
+    // Send to webhook
+    setTimeout(async () => {
+      const { response, cafes } = await getAIResponse(input);
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
         content: response,
-        cafes,
+        cafes: cafes.length > 0 ? cafes : undefined,
       };
       setMessages(prev => [...prev, aiMessage]);
       setIsTyping(false);
-    }, 1000 + Math.random() * 1000);
+    }, 0);
   };
 
   const quickQuestions = [
