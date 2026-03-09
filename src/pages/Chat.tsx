@@ -43,7 +43,7 @@ const mockResponses: { keywords: string[]; response: string; cafes: string[] }[]
 
 const getAIResponse = async (userMessage: string): Promise<{ response: string; cafes: Cafeteria[] }> => {
   try {
-    const res = await fetch('https://brandoncandia.app.n8n.cloud/webhook-test/JamitoCoffe', {
+    const res = await fetch('https://brandoncandia.app.n8n.cloud/webhook/JamitoCoffe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: userMessage }),
