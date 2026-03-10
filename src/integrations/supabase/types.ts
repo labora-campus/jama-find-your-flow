@@ -14,7 +14,110 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      cafeterias: {
+        Row: {
+          address: string
+          barrio: string
+          created_at: string
+          discount: number | null
+          discount_description: string | null
+          has_outlets: boolean
+          hours: Json
+          id: string
+          images: string[]
+          lat: number
+          lng: number
+          name: string
+          noise_level: Database["public"]["Enums"]["noise_level"]
+          occupancy: Database["public"]["Enums"]["occupancy_level"]
+          occupation_by_hour: Json
+          price_range: Database["public"]["Enums"]["price_range"]
+          rating: number
+          review_count: number
+          slug: string
+          updated_at: string
+          wifi_speed: number
+        }
+        Insert: {
+          address: string
+          barrio: string
+          created_at?: string
+          discount?: number | null
+          discount_description?: string | null
+          has_outlets?: boolean
+          hours?: Json
+          id?: string
+          images?: string[]
+          lat?: number
+          lng?: number
+          name: string
+          noise_level?: Database["public"]["Enums"]["noise_level"]
+          occupancy?: Database["public"]["Enums"]["occupancy_level"]
+          occupation_by_hour?: Json
+          price_range?: Database["public"]["Enums"]["price_range"]
+          rating?: number
+          review_count?: number
+          slug: string
+          updated_at?: string
+          wifi_speed?: number
+        }
+        Update: {
+          address?: string
+          barrio?: string
+          created_at?: string
+          discount?: number | null
+          discount_description?: string | null
+          has_outlets?: boolean
+          hours?: Json
+          id?: string
+          images?: string[]
+          lat?: number
+          lng?: number
+          name?: string
+          noise_level?: Database["public"]["Enums"]["noise_level"]
+          occupancy?: Database["public"]["Enums"]["occupancy_level"]
+          occupation_by_hour?: Json
+          price_range?: Database["public"]["Enums"]["price_range"]
+          rating?: number
+          review_count?: number
+          slug?: string
+          updated_at?: string
+          wifi_speed?: number
+        }
+        Relationships: []
+      }
+      menu_items: {
+        Row: {
+          cafeteria_id: string
+          created_at: string
+          id: string
+          name: string
+          price: number
+        }
+        Insert: {
+          cafeteria_id: string
+          created_at?: string
+          id?: string
+          name: string
+          price: number
+        }
+        Update: {
+          cafeteria_id?: string
+          created_at?: string
+          id?: string
+          name?: string
+          price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "menu_items_cafeteria_id_fkey"
+            columns: ["cafeteria_id"]
+            isOneToOne: false
+            referencedRelation: "cafeterias"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +126,9 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      noise_level: "quiet" | "moderate" | "lively"
+      occupancy_level: "low" | "medium" | "high"
+      price_range: "$" | "$$" | "$$$"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +255,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      noise_level: ["quiet", "moderate", "lively"],
+      occupancy_level: ["low", "medium", "high"],
+      price_range: ["$", "$$", "$$$"],
+    },
   },
 } as const
