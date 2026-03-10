@@ -52,12 +52,12 @@ const Buscar = () => {
       {/* Barrio */}
       <div>
         <label className="text-sm font-medium mb-2 block">Barrio</label>
-        <Select value={barrio || ''} onValueChange={(v) => setBarrio(v || null)}>
+        <Select value={barrio || 'all'} onValueChange={(v) => setBarrio(v === 'all' ? null : v)}>
           <SelectTrigger>
             <SelectValue placeholder="Todos los barrios" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Todos los barrios</SelectItem>
+            <SelectItem value="all">Todos los barrios</SelectItem>
             {barrios.map((b) => (
               <SelectItem key={b} value={b}>{b}</SelectItem>
             ))}
