@@ -7,7 +7,8 @@ import { Switch } from '@/components/ui/switch';
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Filter, X, Wifi, Volume2, Zap, DollarSign } from 'lucide-react';
-import { cafeterias, barrios } from '@/data/cafeterias';
+import { barrios } from '@/data/cafeterias';
+import { useCafeterias } from '@/hooks/use-cafeterias';
 import { cn } from '@/lib/utils';
 
 type NoiseFilter = 'quiet' | 'moderate' | 'lively' | null;
@@ -22,6 +23,8 @@ const Buscar = () => {
   const [priceRange, setPriceRange] = useState<PriceFilter>(null);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
+  const { data: cafeterias = [], isLoading } = useCafeterias();
+
   const filteredCafes = useMemo(() => {
     return cafeterias.filter((cafe) => {
       if (barrio && cafe.barrio !== barrio) return false;
@@ -35,7 +38,7 @@ const Buscar = () => {
       }
       return true;
     });
-  }, [barrio, noiseLevel, wifiSpeed, hasOutlets, priceRange]);
+  }, [cafeterias, barrio, noiseLevel, wifiSpeed, hasOutlets, priceRange]);
 
   const clearFilters = () => {
     setBarrio(null);
@@ -49,7 +52,6 @@ const Buscar = () => {
 
   const FilterContent = () => (
     <div className="space-y-6">
-      {/* Barrio */}
       <div>
         <label className="text-sm font-medium mb-2 block">Barrio</label>
         <Select value={barrio || 'all'} onValueChange={(v) => setBarrio(v === 'all' ? null : v)}>
@@ -65,7 +67,6 @@ const Buscar = () => {
         </Select>
       </div>
 
-      {/* Noise Level */}
       <div>
         <label className="text-sm font-medium mb-3 block flex items-center gap-2">
           <Volume2 className="h-4 w-4 text-muted-foreground" />
@@ -92,7 +93,6 @@ const Buscar = () => {
         </div>
       </div>
 
-      {/* WiFi Speed */}
       <div>
         <label className="text-sm font-medium mb-3 block flex items-center gap-2">
           <Wifi className="h-4 w-4 text-muted-foreground" />
@@ -119,7 +119,6 @@ const Buscar = () => {
         </div>
       </div>
 
-      {/* Price Range */}
       <div>
         <label className="text-sm font-medium mb-3 block flex items-center gap-2">
           <DollarSign className="h-4 w-4 text-muted-foreground" />
@@ -142,7 +141,6 @@ const Buscar = () => {
         </div>
       </div>
 
-      {/* Outlets */}
       <div className="flex items-center justify-between">
         <label className="text-sm font-medium flex items-center gap-2">
           <Zap className="h-4 w-4 text-muted-foreground" />
@@ -163,16 +161,14 @@ const Buscar = () => {
   return (
     <Layout>
       <div className="container mx-auto px-4 py-6">
-        {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-bold">Explorar cafeterías</h1>
             <p className="text-sm text-muted-foreground">
-              {filteredCafes.length} lugares encontrados
+              {isLoading ? 'Cargando...' : `${filteredCafes.length} lugares encontrados`}
             </p>
           </div>
 
-          {/* Mobile filter button */}
           <Sheet open={mobileFiltersOpen} onOpenChange={setMobileFiltersOpen}>
             <SheetTrigger asChild>
               <Button variant="outline" size="sm" className="md:hidden">
@@ -197,7 +193,6 @@ const Buscar = () => {
         </div>
 
         <div className="flex gap-8">
-          {/* Desktop Sidebar */}
           <aside className="hidden md:block w-64 flex-shrink-0">
             <div className="sticky top-24 p-5 rounded-xl bg-card border border-border">
               <h2 className="font-semibold mb-4">Filtros</h2>
@@ -205,9 +200,12 @@ const Buscar = () => {
             </div>
           </aside>
 
-          {/* Results Grid */}
           <div className="flex-1">
-            {filteredCafes.length > 0 ? (
+            {isLoading ? (
+              <div className="text-center py-16">
+                <p className="text-muted-foreground">Cargando cafeterías...</p>
+              </div>
+            ) : filteredCafes.length > 0 ? (
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredCafes.map((cafe) => (
                   <CafeCard key={cafe.id} cafe={cafe} />
